@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1858
     height: 1037
   m_ShowMode: 4
-  m_Title: Scene
+  m_Title: Project
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 40
+  controlID: 107
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -223,7 +223,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 41
+  controlID: 37
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -248,7 +248,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 50}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 42
+  controlID: 38
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -321,7 +321,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Samples/XR Hands/1.3.0/HandVisualizer/Prefabs
+    - Assets
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -329,16 +329,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Samples/XR Hands/1.3.0/HandVisualizer/Prefabs
+  - Assets
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\Dillon\Documents\GitHub\honours-vr-hand-tracking
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: cc5b0000
-    m_LastClickedID: 23500
-    m_ExpandedIDs: 00000000ea5a0000ec5a0000ee5a0000345b0000385b00003a5b00003c5b0000c25b000000ca9a3b
+    m_SelectedIDs: 029c0000
+    m_LastClickedID: 39938
+    m_ExpandedIDs: 00000000d2090000d6090000da090000e6090000ea090000be9b0000c09b0000c29b0000029c000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -366,7 +366,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000ea5a0000ec5a0000ee5a0000
+    m_ExpandedIDs: 00000000be9b0000c09b0000c29b0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -506,9 +506,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
+      m_SelectedIDs: 741cffff
       m_LastClickedID: 0
-      m_ExpandedIDs: fafaffff28fbffff2afbffff
+      m_ExpandedIDs: 9a47ffffa84effff725effff105ffffffc60ffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -847,7 +847,7 @@ MonoBehaviour:
       snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 0
       id: Scene View/TrailRenderer
-      index: 8
+      index: 7
       layout: 4
       size: {x: 0, y: 0}
       sizeOverriden: 0
@@ -875,9 +875,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: -12.350616, y: -5.92115, z: -12.61641}
+    m_Target: {x: -0.83052224, y: -5.567105, z: 18.444818}
     speed: 2
-    m_Value: {x: -12.350616, y: -5.92115, z: -12.61641}
+    m_Value: {x: -0.83052224, y: -5.567105, z: 18.444818}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -923,9 +923,9 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.07415128, y: 0.90368825, z: -0.17455554, w: -0.3838851}
+    m_Target: {x: -0.18374108, y: 0.012378688, z: -0.0023184814, w: -0.98288053}
     speed: 2
-    m_Value: {x: -0.07388979, y: 0.9042684, z: -0.17466758, w: -0.38253134}
+    m_Value: {x: -0.18373983, y: 0.013853178, z: -0.0025941245, w: -0.98287386}
   m_Size:
     m_Target: 10
     speed: 2

@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638423340407620188
-    m_Hash: 2661065461
+      ticks: 638428437105331288
+    m_Hash: 2922702013
   m_LockFileStatus:
     m_FilePath: C:/Users/Dillon/Documents/GitHub/honours-vr-hand-tracking/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638423340407660232
-    m_Hash: 2853130764
+      ticks: 638428437105371322
+    m_Hash: 2439166193
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
@@ -752,6 +752,7 @@ m_ResolvedPackages:
     - 3.2.0-pre.5
     - 3.2.0-pre.6
     - 3.2.0-pre.7
+    - 3.2.0-pre.8
     - 4.0.0-pre.1
     - 4.0.0-pre.2
     compatible:
@@ -764,6 +765,7 @@ m_ResolvedPackages:
     - 3.2.0-pre.5
     - 3.2.0-pre.6
     - 3.2.0-pre.7
+    - 3.2.0-pre.8
     - 4.0.0-pre.1
     - 4.0.0-pre.2
     recommended: 3.0.7
@@ -1048,12 +1050,12 @@ m_ResolvedPackages:
     deprecationMessage: 
   isDeprecated: 0
   deprecationMessage: 
-- packageId: com.unity.xr.hands@1.3.0
+- packageId: com.unity.xr.hands@1.4.0-pre.1
   testable: 0
   isDirectDependency: 1
-  version: 1.3.0
+  version: 1.4.0-pre.1
   source: 1
-  resolvedPath: C:\Users\Dillon\Documents\GitHub\honours-vr-hand-tracking\Library\PackageCache\com.unity.xr.hands@1.3.0
+  resolvedPath: C:\Users\Dillon\Documents\GitHub\honours-vr-hand-tracking\Library\PackageCache\com.unity.xr.hands@1.4.0-pre.1
   assetPath: Packages/com.unity.xr.hands
   name: com.unity.xr.hands
   displayName: XR Hands
@@ -1091,6 +1093,8 @@ m_ResolvedPackages:
     version: 2.2.0
   - name: com.unity.xr.management
     version: 4.0.1
+  - name: com.unity.mathematics
+    version: 1.2.6
   resolvedDependencies:
   - name: com.unity.inputsystem
     version: 1.7.0
@@ -1116,6 +1120,8 @@ m_ResolvedPackages:
     version: 1.0.0
   - name: com.unity.xr.legacyinputhelpers
     version: 2.1.10
+  - name: com.unity.mathematics
+    version: 1.2.6
   keywords:
   - xr
   - vr
@@ -1135,13 +1141,13 @@ m_ResolvedPackages:
     configSource: 0
   hideInEditor: 1
   isAssetStorePackage: 0
-  datePublishedTicks: 638283167010000000
-  documentationUrl: https://docs.unity3d.com/Packages/com.unity.xr.hands@1.3/manual/index.html
+  datePublishedTicks: 638368702310000000
+  documentationUrl: https://docs.unity3d.com/Packages/com.unity.xr.hands@1.4/manual/index.html
   hasRepository: 1
   repository:
     type: git
     url: https://github.cds.internal.unity3d.com/unity/com.unity.xr.hands.git
-    revision: 3c7b72f0abeabbe733ac0f37b40f5560a732ceda
+    revision: 4b6490faab4912d93bf26b97d25e22554452bf7a
     path: 
   unityLifecycle:
     version: 1.3.0
