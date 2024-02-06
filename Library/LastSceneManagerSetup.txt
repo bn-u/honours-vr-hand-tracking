@@ -1,5 +1,0 @@
-sceneSetups:
-- path: Assets/Samples/XR Hands/1.4.0-pre.1/HandVisualizer/HandVisualizer.unity
-  isLoaded: 1
-  isActive: 1
-  isSubScene: 0
