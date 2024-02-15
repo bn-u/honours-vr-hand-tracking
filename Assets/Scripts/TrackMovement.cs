@@ -13,7 +13,9 @@ public class TrackMovement : MonoBehaviour
     private Vector3 endPos;
     private Quaternion startRot;
     private Quaternion endRot;
+
     public bool right;
+    public GameObject mesh;
 
     public void EnableTracker()
     {
@@ -47,28 +49,48 @@ public class TrackMovement : MonoBehaviour
         tracking = false;
     }
 
+    private void FindRight()
+    {
+        GameObject[] childs = mesh.transform.childCount;
+        for (int i = 0; i < childs.Length; i++)
+        {
+            Debug.Log(childs[i]);
+
+        }
+
+        Vector3 localPos = startPos.transform.InverseTransformPoint();
+
+        if (localPos.x > 0)
+        {
+            //left
+        }
+        else if (localPos.x < 0)
+        {
+            //right
+        }
+    }
+
     void Update()
     {
+        /*
         if (tracking == true)
         {
             // record position at start
 
-            //GameObject userInteractor = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            //userInteractor.transform.position = startPos;
-            //userInteractor.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
+            GameObject userInteractor = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            userInteractor.transform.position = startPos;
+            userInteractor.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
 
 
             // record array of positions
-            /*BezierKnot[] splineArray = spline.Spline.ToArray();
+            BezierKnot[] splineArray = spline.Spline.ToArray();
             for (int i = 0; i < splineArray.Length; i++)
             {
-                var knot = spline.Spline.ToArray()[i];
-                knot.Position = spline.transform.InverseTransformPoint(startPos);
-                spline.Spline.SetKnot(i, knot);
             }
-            */
+            
 
         }
+        */
 
         var knot0 = spline.Spline.ToArray()[0];
         knot0.Position = spline.transform.InverseTransformPoint(startPos);
