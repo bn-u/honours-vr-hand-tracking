@@ -8,6 +8,7 @@ public class TrackMovement : MonoBehaviour
     private bool tracking = false;
     private Vector3 startPos;
     private Vector3 endPos;
+    private Quaternion pointRotation;
 
     public bool right;
     public GameObject targetMesh;
@@ -28,7 +29,7 @@ public class TrackMovement : MonoBehaviour
                 startPos = LeftPos();
                 break;
         }
-        pathPoints.Add(startPos);
+        //pathPoints.Add(startPos);
         tracking = true;
     }
 
@@ -58,8 +59,6 @@ public class TrackMovement : MonoBehaviour
     {
         return GameObject.Find("/XR Interaction Hands Setup/XR Origin (XR Rig)/Camera Offset/Right Hand/Poke Interactor").transform.position;
     }
-
-
 
     private void FindRight()
     {
@@ -91,6 +90,7 @@ public class TrackMovement : MonoBehaviour
 
     void createSpline()
     {
+        
         var container = gameObject.GetComponent<SplineContainer>();
         if (container == null)
         {
@@ -101,10 +101,16 @@ public class TrackMovement : MonoBehaviour
         var knots = new BezierKnot[pathPoints.Count];
         for (int i = 0; i < pathPoints.Count; i++)
         {
-            knots[i] = new BezierKnot(pathPoints[i], -0.05f * Vector3.forward, 0.05f * Vector3.forward);
+            if (i != 0)
+            {
+                pointRotation = Quaternion.LookRotation(pathPoints[i - 1] - pathPoints[i], Vector3.up);
+                pointRotation = Quaternion.Inverse(pointRotation);
+            }
 
-            spline.Knots = knots;
+            knots[i] = new BezierKnot(pathPoints[i], -0.05f * Vector3.forward, 0.05f * Vector3.forward, pointRotation);
+
         }
+        spline.Knots = knots;
     }
 
     void Update()
