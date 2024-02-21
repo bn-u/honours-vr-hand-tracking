@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
 
@@ -29,7 +30,6 @@ public class TrackMovement : MonoBehaviour
                 startPos = LeftPos();
                 break;
         }
-        //pathPoints.Add(startPos);
         tracking = true;
     }
 
@@ -59,34 +59,7 @@ public class TrackMovement : MonoBehaviour
     {
         return GameObject.Find("/XR Interaction Hands Setup/XR Origin (XR Rig)/Camera Offset/Right Hand/Poke Interactor").transform.position;
     }
-
-    private void FindRight()
-    {
-        int childCount = targetMesh.transform.hierarchyCount;
-        for (int i = 0; i < childCount; i++)
-        {
-            GameObject child = targetMesh.transform.GetChild(i).gameObject;
-
-            //convert child to local space of start pos
-            //check if its located left/right/up/down to start pos
-
-            //convert child to local space of end pos
-            //check if its located left/right/up/down to end pos
-
-            //cross reference if points are both 
-
-            Vector3 localPos = child.transform.InverseTransformPoint(startPos);
-            if (localPos.x > 0)
-            {
-                //left
-            }
-            else if (localPos.x < 0)
-            {
-                //right
-            }
-        }
-
-    }
+    
 
     void createSpline()
     {
@@ -110,7 +83,10 @@ public class TrackMovement : MonoBehaviour
             knots[i] = new BezierKnot(pathPoints[i], -0.05f * Vector3.forward, 0.05f * Vector3.forward, pointRotation);
 
         }
+
         spline.Knots = knots;
+
+        FindRight(spline);
     }
 
     void Update()
@@ -138,8 +114,11 @@ public class TrackMovement : MonoBehaviour
         {
             pathPoints.Add(result[i]);
         }
-        Debug.Log("Points: " + points.Count);
-        Debug.Log("Result: " + result.Count);
+        if (isDebug == true)
+        {
+            Debug.Log("trackPos() Points: " + points.Count);
+            Debug.Log("trackPos() Result: " + result.Count);
+        }
     }
 
     static List<Vector3> EveryNthElement(List<Vector3> list, int n)
@@ -153,6 +132,62 @@ public class TrackMovement : MonoBehaviour
             }
         }
         return result;
+    }
+
+    private void FindRight(Spline currentSpline)
+    {
+        int childCount = targetMesh.transform.hierarchyCount;
+        childCount--;
+
+        for (int j = 0; j < pathPoints.Count; j++)
+        {
+            Collider[] radiusObjects = Physics.OverlapSphere(pathPoints[j], 0.2f);
+            Debug.Log("Objects in radius: " + radiusObjects.Length);
+        }
+
+        for (int i = 0; i < childCount; i++)
+        {
+            GameObject child = targetMesh.transform.GetChild(i).gameObject;
+
+            //convert child to local space of start pos
+            //check if its located left/right/up/down to start pos
+
+            //convert child to local space of end pos
+            //check if its located left/right/up/down to end pos
+
+            //cross reference if points are both 
+
+            Vector3 localPos = child.transform.InverseTransformPoint(startPos);
+            if (localPos.x > 0)
+            {
+                //left
+            }
+            else if (localPos.x < 0)
+            {
+                //right
+            }
+
+
+
+            //if child is in radius then
+            MoveToSpline(child, currentSpline);
+
+        }
+        
+        if (isDebug == true)
+        {
+            Debug.Log("FindRight() childCount: " + childCount);
+        }
+    }
+
+    private void MoveToSpline(GameObject child, Spline currentSpline)
+    {
+        var point = gameObject.transform.InverseTransformPoint(child.transform.position);
+        float distance = SplineUtility.GetNearestPoint(currentSpline, point, out float3 nearest, out float t);
+
+        Vector3 localNear = nearest;
+        var near = localNear + gameObject.transform.position;
+        child.transform.position = near;
     }
 
 }
