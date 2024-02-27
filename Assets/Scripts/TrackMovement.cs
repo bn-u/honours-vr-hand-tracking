@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -10,12 +11,22 @@ public class TrackMovement : MonoBehaviour
     private Vector3 startPos;
     private Vector3 endPos;
     private Quaternion pointRotation;
+    private int gestureType;
 
     public bool right;
     public GameObject targetMesh;
     public bool isDebug = false;
+
     List<Vector3> pathPoints = new List<Vector3>();
     List<Vector3> points = new List<Vector3>();
+
+    public void CutEnable() { gestureType = 1; EnableTracker(); }
+
+    public void GrowEnable() { gestureType = 2; EnableTracker(); }
+
+    public void PickEnable() { gestureType = 3; }
+
+
 
     public void EnableTracker()
     {
@@ -69,7 +80,6 @@ public class TrackMovement : MonoBehaviour
         {
             container = gameObject.AddComponent<SplineContainer>();
         }
-        container.RemoveSpline(container.Spline);
         var spline = container.AddSpline();
         var knots = new BezierKnot[pathPoints.Count];
         for (int i = 0; i < pathPoints.Count; i++)
@@ -86,7 +96,48 @@ public class TrackMovement : MonoBehaviour
 
         spline.Knots = knots;
 
-        FindRight(spline);
+        SplineExtrude extrude = gameObject.GetComponent<SplineExtrude>();
+        if (extrude == null)
+        {
+            extrude = gameObject.AddComponent<SplineExtrude>();
+        }
+
+        extrude.Container = container;
+
+        switch (gestureType)
+        {
+            case 1:
+                //container.RemoveSpline(container.Spline);
+                container.RemoveSpline(container.Spline);
+                break;
+            case 2:
+                extrudeMesh(extrude);
+                break;
+        }
+
+        //FindRight(spline);
+    }
+
+    void extrudeMesh(SplineExtrude extrude)
+    {
+        if (extrude != null)
+        {
+            MeshFilter meshFilter = GetComponent<MeshFilter>();
+            Mesh extrusion = new Mesh();
+            extrusion.name = "extrusionLine";
+            meshFilter.mesh = extrusion;
+
+            Material newMat = new Material(Shader.Find("Standard"));
+            MeshRenderer meshRender = GetComponent<MeshRenderer>();
+            meshRender.material = newMat;
+
+            extrude.Radius = 0.01f;
+            extrude.SegmentsPerUnit = 50;
+
+            extrude.Rebuild();
+            Debug.Log("Rebuilt");
+        }
+
     }
 
     void Update()
@@ -136,47 +187,50 @@ public class TrackMovement : MonoBehaviour
 
     private void FindRight(Spline currentSpline)
     {
-        int childCount = targetMesh.transform.hierarchyCount;
-        childCount--;
-
-        for (int j = 0; j < pathPoints.Count; j++)
+        if (targetMesh != null)
         {
-            Collider[] radiusObjects = Physics.OverlapSphere(pathPoints[j], 0.2f);
-            Debug.Log("Objects in radius: " + radiusObjects.Length);
-        }
+            int childCount = targetMesh.transform.hierarchyCount;
+            childCount--;
 
-        for (int i = 0; i < childCount; i++)
-        {
-            GameObject child = targetMesh.transform.GetChild(i).gameObject;
-
-            //convert child to local space of start pos
-            //check if its located left/right/up/down to start pos
-
-            //convert child to local space of end pos
-            //check if its located left/right/up/down to end pos
-
-            //cross reference if points are both 
-
-            Vector3 localPos = child.transform.InverseTransformPoint(startPos);
-            if (localPos.x > 0)
+            for (int j = 0; j < pathPoints.Count; j++)
             {
-                //left
-            }
-            else if (localPos.x < 0)
-            {
-                //right
+                Collider[] radiusObjects = Physics.OverlapSphere(pathPoints[j], 0.2f);
+                Debug.Log("Objects in radius: " + radiusObjects.Length);
             }
 
+            for (int i = 0; i < childCount; i++)
+            {
+                GameObject child = targetMesh.transform.GetChild(i).gameObject;
+
+                //convert child to local space of start pos
+                //check if its located left/right/up/down to start pos
+
+                //convert child to local space of end pos
+                //check if its located left/right/up/down to end pos
+
+                //cross reference if points are both 
+
+                Vector3 localPos = child.transform.InverseTransformPoint(startPos);
+                if (localPos.x > 0)
+                {
+                    //left
+                }
+                else if (localPos.x < 0)
+                {
+                    //right
+                }
 
 
-            //if child is in radius then
-            MoveToSpline(child, currentSpline);
 
-        }
-        
-        if (isDebug == true)
-        {
-            Debug.Log("FindRight() childCount: " + childCount);
+                //if child is in radius then
+                MoveToSpline(child, currentSpline);
+
+            }
+
+            if (isDebug == true)
+            {
+                Debug.Log("FindRight() childCount: " + childCount);
+            }
         }
     }
 
