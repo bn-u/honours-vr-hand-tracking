@@ -12,6 +12,7 @@ public class TrackMovement : MonoBehaviour
     private Vector3 endPos;
     private Quaternion pointRotation;
     private int gestureType;
+    private bool pickEnabled = false;
 
     public bool right;
     public GameObject targetMesh;
@@ -19,14 +20,60 @@ public class TrackMovement : MonoBehaviour
 
     List<Vector3> pathPoints = new List<Vector3>();
     List<Vector3> points = new List<Vector3>();
+    List<GameObject> childList = new List<GameObject>();
 
     public void CutEnable() { gestureType = 1; EnableTracker(); }
 
     public void GrowEnable() { gestureType = 2; EnableTracker(); }
 
-    public void PickEnable() { gestureType = 3; }
+    public void PickEnable() { gestureType = 3; Pick(); }
 
+    public void Pick()
+    {
+        //Create radius around point
+        switch (right)
+        {
+            case true:
+                startPos = RightPos();
+                break;
+            case false:
+                startPos = LeftPos();
+                break;
+        }
 
+        //Find collider in radius
+        if (targetMesh != null)
+        {
+            int childCount = targetMesh.transform.hierarchyCount;
+            childCount--;
+
+            Collider[] radiusObjects = Physics.OverlapSphere(startPos, 0.1f);
+            Debug.Log("Objects in radius: " + radiusObjects.Length);
+
+            childList.Clear();
+
+            List<GameObject> colliderList = new List<GameObject>();
+
+            for (int i = 0; i < radiusObjects.Length; i++)
+            {
+                colliderList.Add(radiusObjects[i].gameObject);
+            }
+
+            for (int i = 0; i < childCount; i++)
+            {
+                GameObject child = targetMesh.transform.GetChild(i).gameObject;
+
+                foreach (GameObject colliderParent in colliderList)
+                {
+                    if (colliderParent == child)
+                    {
+                        childList.Add(child);
+                    }
+                }
+            }
+            pickEnabled = true;
+        }
+    }
 
     public void EnableTracker()
     {
@@ -56,9 +103,19 @@ public class TrackMovement : MonoBehaviour
                 break;
         }
         tracking = false;
-        trackPos();
-        pathPoints.Add(endPos);
-        createSpline();
+
+        switch (gestureType)
+        {
+            case 1 or 2:
+                trackPos();
+                pathPoints.Add(endPos);
+                createSpline();
+                break;
+            case 3:
+                pickEnabled = false;
+                break;
+        }
+
     }
 
     static Vector3 LeftPos()
@@ -155,6 +212,17 @@ public class TrackMovement : MonoBehaviour
                     break;
             }
             points.Add(pos);
+        }
+
+        //Attach gameObject to finger until finish
+        if (pickEnabled == true)
+        {
+            foreach (GameObject child in childList)
+            {
+                Vector3 pos = RightPos();
+                child.transform.position = pos;
+                Debug.Log("picked");
+            }
         }
     }
 
