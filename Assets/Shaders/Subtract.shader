@@ -1,8 +1,10 @@
-Shader "Unlit/NewUnlitShader"
+Shader "Unlit/Subtract"
 {
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _startPos ("start", Vector) = (.25, .5, .5)
+        _endPos ("end", Vector) = (.25, .5, .5)
     }
     SubShader
     {
@@ -48,11 +50,29 @@ Shader "Unlit/NewUnlitShader"
                 return o;
             }
 
-            float GetDist(float3 p)
+            float sphereSDF(float3 p)
             {
-                float d = length(p) - .5;
+                return length(p)-1.;
+            }
 
-                return d;
+            float cubeSDF(float3 p)
+            {
+                float3 d = abs(p)-float3(1., 1., 1.);
+                float insideDistance = min(max(d.x, max(d.y, d.z)), 0.);
+                float outsideDistance = length(max(d, 0.));
+                return insideDistance+outsideDistance;
+            }
+
+            float intersectSDF(float distA, float distB)
+            {
+                return max(distA, distB);
+            }
+
+            float sceneSDF(float3 samplePoint)
+            {
+                float sphereDist = sphereSDF(samplePoint/1.2)*1.2;
+                float cubeDist = cubeSDF(samplePoint);
+                return intersectSDF(cubeDist, sphereDist);
             }
 
             float Raymarch(float3 ro, float3 rd)
@@ -61,14 +81,19 @@ Shader "Unlit/NewUnlitShader"
                 float dS;
                 for(int i = 0; i < MAX_STEPS; i++)
                 {
+                    //float sphereDist = sphereSDF(samplePoint/1.2)*1.2;
                     float3 p = ro + dO * rd;
-                    dS = GetDist(p);
+                    dS = sceneSDF(p);
                     dO += dS;
                     if (dS < SURF_DIST || dO > MAX_DIST) break;
                 }
 
                 return dO;
             }
+
+
+
+
 
             fixed4 frag (v2f i) : SV_Target
             {

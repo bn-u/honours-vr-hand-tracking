@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: testmat
+  m_Name: SubtractShader
   m_Shader: {fileID: 4800000, guid: 1fab31685d6a8dc41a65dc71f45bd01c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -29,5 +29,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats: []
-    m_Colors: []
+    m_Colors:
+    - _endPos: {r: 0.25, g: 0.5, b: 0.5, a: 1}
+    - _startPos: {r: 0.25, g: 0.5, b: 0.5, a: 1}
   m_BuildTextureStacks: []
