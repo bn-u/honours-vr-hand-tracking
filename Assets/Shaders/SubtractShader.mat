@@ -28,8 +28,18 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
-    m_Floats: []
+    m_Floats:
+    - _Rot: 1
+    - _xRot: 0
+    - _yRot: 0.5
+    - _zRot: 0
     m_Colors:
-    - _endPos: {r: 0.25, g: 0.5, b: 0.5, a: 1}
-    - _startPos: {r: 0.25, g: 0.5, b: 0.5, a: 1}
+    - _EndPos: {r: 1.6, g: 0, b: 0, a: 1}
+    - _Rotation: {r: 0, g: 0.6, b: 0, a: 1}
+    - _Size: {r: 0.1, g: 1, b: 1, a: 1}
+    - _StartPos: {r: -0.2, g: 0, b: 0, a: 1}
+    - _endPos: {r: 0, g: 0, b: 0, a: 1}
+    - _startPos: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _test: {r: 0.1, g: 1, b: 1, a: 1}
+    - outpit: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

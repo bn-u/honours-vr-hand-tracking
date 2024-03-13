@@ -3,8 +3,10 @@ Shader "Unlit/Subtract"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _startPos ("start", Vector) = (.25, .5, .5)
-        _endPos ("end", Vector) = (.25, .5, .5)
+        _StartPos ("Start", Vector) = (.5, .5, .5)
+        _EndPos ("End", Vector) = (0., 0., 0.)
+        _Size ("Size", Vector) = (1., 1., 1.)
+        _Rotation ("Rotation", Vector) = (0., 0., 0.)
     }
     SubShader
     {
@@ -40,6 +42,11 @@ Shader "Unlit/Subtract"
             sampler2D _MainTex;
             float4 _MainTex_ST;
 
+            float3 _Size;
+            float3 _StartPos;
+            float3 _EndPos;
+            float3 _Rotation;
+
             v2f vert (appdata v)
             {
                 v2f o;
@@ -52,28 +59,78 @@ Shader "Unlit/Subtract"
 
             float sphereSDF(float3 p)
             {
-                return length(p)-1.;
+                return length(p)-0.8;
             }
 
-            float cubeSDF(float3 p)
+            float2x2 Rot(float a)
             {
-                float3 d = abs(p)-float3(1., 1., 1.);
-                float insideDistance = min(max(d.x, max(d.y, d.z)), 0.);
-                float outsideDistance = length(max(d, 0.));
-                return insideDistance+outsideDistance;
+                //rotation matrix
+                float s = sin(a);
+                float c = cos(a);
+                return transpose(float2x2(c, -s, s, c));
             }
 
-            float intersectSDF(float distA, float distB)
+            float differenceSDF(float distA, float distB)
             {
-                return max(distA, distB);
+                return max(distA, -distB);
             }
+
+            float pointDist()
+            {
+                //calculate the distance between points
+                float3 l = (_EndPos - _StartPos);
+
+
+                //pythagoras 
+                float endPyth = pow(_EndPos.x,2) + pow(_EndPos.y,2) + pow(_EndPos.z,2);
+                float startPyth = pow(_StartPos.x,2) + pow(_StartPos.y,2) + pow(_StartPos.z,2);
+
+                float pdot = dot(_EndPos, _StartPos);
+
+                //rotation
+                float theta = acos(pdot/(cross(sqrt(startPyth),sqrt(endPyth))));
+                
+                return theta;
+            }
+
+            float dBox(float3 p)
+            {
+                p = abs(p)-_Size;
+                return length(max(p, 0.))+min(max(p.x, max(p.y, p.z)), 0.);
+            }
+            
 
             float sceneSDF(float3 samplePoint)
             {
-                float sphereDist = sphereSDF(samplePoint/1.2)*1.2;
-                float cubeDist = cubeSDF(samplePoint);
-                return intersectSDF(cubeDist, sphereDist);
+                float pd = pointDist();
+                float sphereDist = sphereSDF(samplePoint/1.2);
+
+                float3 forwardVector = normalize(_EndPos - _StartPos);
+
+                float3 midpoint =
+                (
+                    (_EndPos+_StartPos)/2
+                );
+
+                float3 bp = samplePoint;
+                //set location
+                //bp -= _StartPos;
+                bp -= midpoint;
+
+                //set rotation (based on pi)
+
+                bp.xz = mul(bp.xz,Rot((float)_Rotation.x)); //x
+
+                bp.xy = mul(bp.xy,Rot((float)_Rotation.y)); //y
+
+                bp.zy = mul(bp.zy,Rot((float)_Rotation.z)); //z
+
+
+                float rotate = dBox(bp);
+                return differenceSDF(sphereDist, rotate);
             }
+
+
 
             float Raymarch(float3 ro, float3 rd)
             {
@@ -92,9 +149,6 @@ Shader "Unlit/Subtract"
             }
 
 
-
-
-
             fixed4 frag (v2f i) : SV_Target
             {
                 float2 uv = i.uv-.5;
@@ -106,7 +160,7 @@ Shader "Unlit/Subtract"
 
                 if(d<MAX_DIST)
                 {
-                    col.r = 1;
+                    col.rgb = 1;
                 }
                 else
                 {
