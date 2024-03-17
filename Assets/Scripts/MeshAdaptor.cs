@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class MeshAdaptor : MonoBehaviour
@@ -12,6 +13,7 @@ public class MeshAdaptor : MonoBehaviour
     int[] triangles;
     Vector3 point;
 
+    public bool isReset = false;
     public bool isDebug = false;
 
     private void Start()
@@ -67,6 +69,7 @@ public class MeshAdaptor : MonoBehaviour
             Debug.Log("point: " + point + "int: " + i);
         }
     }
+
     /// <summary>
     /// Finds vertices which relate to eachother and connects them
     /// </summary>
@@ -124,6 +127,10 @@ public class MeshAdaptor : MonoBehaviour
     {
         Debugger();
         CheckMovement();
+        if(isReset == true)
+        {
+            Reset();
+        }
     }
 
     private void Debugger()
@@ -152,6 +159,9 @@ public class MeshAdaptor : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Resets mesh and points to original
+    /// </summary>
     public void Reset()
     {
         if (clonedMesh != null && originalMesh != null)
@@ -164,6 +174,21 @@ public class MeshAdaptor : MonoBehaviour
 
             vertices = clonedMesh.vertices;
             triangles = clonedMesh.triangles;
+
+            List<Transform> childList = new List<Transform>();
+            foreach (Transform child in gameObject.transform)
+            {
+                childList.Add(child);
+            }
+
+            for (int i = 0; i < originalMesh.vertices.Length; i++)
+            {
+                point = transform.TransformPoint(originalMesh.vertices[i]);
+
+                Transform child = childList[i];
+                child.transform.position = point;
+            }
+            
         }
     }
 }
