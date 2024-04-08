@@ -31,8 +31,8 @@ public class MeshAdaptor : MonoBehaviour
         clonedMesh.name = "clone";
         clonedMesh.vertices = originalMesh.vertices;
         clonedMesh.triangles = originalMesh.triangles;
-        clonedMesh.normals = originalMesh.normals;
-        clonedMesh.uv = originalMesh.uv;
+        //clonedMesh.normals = originalMesh.normals;
+        //clonedMesh.uv = originalMesh.uv;
         meshFilter.mesh = clonedMesh;
 
         //Collects mesh verticies
@@ -71,7 +71,7 @@ public class MeshAdaptor : MonoBehaviour
     }
 
     /// <summary>
-    /// Finds vertices which relate to eachother and connects them
+    /// Finds vertices which relate to eachother and returns a list of them
     /// </summary>
     private List<int> FindRelatedVertices(Vector3 targetPt, bool findConnected)
     {
