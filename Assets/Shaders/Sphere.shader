@@ -1,4 +1,4 @@
-Shader "Unlit/Subtract"
+Shader "Unlit/Sphere"
 {
     Properties
     {
@@ -10,7 +10,7 @@ Shader "Unlit/Subtract"
     SubShader
     {
         Tags { "RenderType"="Opaque" }
-        LOD 200
+        LOD 100
 
         Pass
         {
@@ -52,13 +52,12 @@ Shader "Unlit/Subtract"
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.ro = _WorldSpaceCameraPos;//mul(unity_WorldToObject, float4(_WorldSpaceCameraPos,1));
                 o.hitPos = mul(unity_ObjectToWorld, v.vertex);
-
                 return o;
             }
 
             float sphereSDF(float3 p)
             {
-                return length(p)-1;
+                return length(p)-0.8;
             }
 
             float2x2 Rot(float a)
@@ -72,6 +71,16 @@ Shader "Unlit/Subtract"
             float differenceSDF(float distA, float distB)
             {
                 return max(distA, -distB);
+            }
+
+            float unionSDF(float distA, float distB)
+            {
+                return min(distA, distB);
+            }
+
+            float intersectionSDF(float distA, float distB)
+            {
+                return max(distA, distB);
             }
 
             /*float pointDist()
@@ -103,11 +112,11 @@ Shader "Unlit/Subtract"
             float sceneSDF(float3 samplePoint)
             {
                 //float pd = pointDist();
-                float sphereDist = sphereSDF(samplePoint);
+                float sphereDist = sphereSDF(samplePoint/1.2);
 
-                //float3 forwardVector = normalize(_EndPos - _StartPos);
+               // float3 forwardVector = normalize(_EndPos - _StartPos);
 
-                /* float3 midpoint =
+                /*float3 midpoint =
                 (
                     (_EndPos+_StartPos)/2
                 );
@@ -127,9 +136,10 @@ Shader "Unlit/Subtract"
                 bp.zy = mul(bp.zy,Rot((float)_Rotation.z)); //z
 
 
-                float rotate = sphereSDF(bp/0.3);
+                float rotate = dBox(bp);
                 return differenceSDF(sphereDist, rotate);
             }
+
 
 
             float Raymarch(float3 ro, float3 rd)
@@ -138,6 +148,7 @@ Shader "Unlit/Subtract"
                 float dS;
                 for(int i = 0; i < MAX_STEPS; i++)
                 {
+                    //float sphereDist = sphereSDF(samplePoint/1.2)*1.2;
                     float3 p = ro + dO * rd;
                     dS = sceneSDF(p);
                     dO += dS;
@@ -147,17 +158,6 @@ Shader "Unlit/Subtract"
                 return dO;
             }
 
-            float3 GetNormal(float p)
-            {
-                float2 e = float2(1e-2, 0);
-                float3 n = sceneSDF(p) - float3(
-                    sceneSDF(p-e.xyy),
-                    sceneSDF(p-e.yxy),
-                    sceneSDF(p-e.yyx)
-                );
-                return normalize(n);
-            }
-
 
             fixed4 frag (v2f i) : SV_Target
             {
@@ -165,19 +165,19 @@ Shader "Unlit/Subtract"
                 float3 ro = i.ro;
                 float3 rd = normalize(i.hitPos - ro);
 
-                float depth = Raymarch(ro, rd);
+                float d = Raymarch(ro, rd);
                 fixed4 col = 0;
-                if(depth<MAX_DIST)
+
+                if(d<MAX_DIST)
                 {
-                    float3 p = ro + rd * depth;
-                    //float3 n = GetNormal(p);
+                    float3 p = ro + rd * d;
                     col.rgb = p;
-                    //col.rgb = n;
                 }
                 else
                 {
-                   discard;
+                    discard;
                 }
+
                 return col;
             }
             ENDCG
