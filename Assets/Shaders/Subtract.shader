@@ -5,7 +5,7 @@ Shader "Unlit/Subtract"
         _MainTex ("Texture", 2D) = "white" {}
         _StartPos ("Start", Vector) = (.5, .5, .5)
         _EndPos ("End", Vector) = (0., 0., 0.)
-        _Size ("Size", Vector) = (1., 1., 1.)
+        _Size ("Size", Vector) = (5, 0.1, 5)
     }
     SubShader
     {
@@ -100,8 +100,6 @@ Shader "Unlit/Subtract"
                 float pd = pointDist();
                 float sphereDist = sphereSDF(samplePoint/1.2);
 
-                float3 forwardVector = normalize(_EndPos - _StartPos);
-
                 float3 midpoint =
                 (
                     (_EndPos+_StartPos)/2
@@ -129,10 +127,7 @@ Shader "Unlit/Subtract"
                     0,       0,       0,       1
                 };
 
-                if (midpoint != 0,0,0)
-                {
-                    bp.xyz = mul(bp.xyz, rotationMatrix);
-                }
+                bp.xyz = mul(bp.xyz, rotationMatrix);
 
                 float rotate = dBox(bp);
                 return differenceSDF(sphereDist, rotate);
@@ -166,7 +161,8 @@ Shader "Unlit/Subtract"
 
                 if(d<MAX_DIST)
                 {
-                    col.rgb = 1;
+                    float3 p = ro + rd * d;
+                    col.rgb = p;
                 }
                 else
                 {

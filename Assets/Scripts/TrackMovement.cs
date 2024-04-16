@@ -13,6 +13,8 @@ public class TrackMovement : MonoBehaviour
     private Quaternion pointRotation;
     private int gestureType;
     private bool pickEnabled = false;
+    public Renderer renderer;
+    Material meshMat;
 
     public bool right;
     public GameObject targetMesh;
@@ -27,6 +29,12 @@ public class TrackMovement : MonoBehaviour
     public void GrowEnable() { gestureType = 2; EnableTracker(); }
 
     public void PickEnable() { gestureType = 3; Pick(); }
+
+    void Start()
+    {
+        renderer = targetMesh.GetComponent<Renderer>();
+        meshMat = renderer.material;
+    }
 
     public void Pick()
     {
@@ -106,7 +114,19 @@ public class TrackMovement : MonoBehaviour
 
         switch (gestureType)
         {
-            case 1 or 2:
+            case 1:
+                try
+                {
+                    meshMat.SetVector("_StartPos", startPos);
+                    meshMat.SetVector("_EndPos", endPos);
+                }
+                catch
+                {
+                    Debug.Log("Cannot change shader's properites");
+                }
+
+                break;
+            case 2:
                 trackPos();
                 pathPoints.Add(endPos);
                 createSpline();
