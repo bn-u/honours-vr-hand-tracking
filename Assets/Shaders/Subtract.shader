@@ -6,7 +6,6 @@ Shader "Unlit/Subtract"
         _StartPos ("Start", Vector) = (.5, .5, .5)
         _EndPos ("End", Vector) = (0., 0., 0.)
         _Size ("Size", Vector) = (1., 1., 1.)
-        _Rotation ("Rotation", Vector) = (0., 0., 0.)
     }
     SubShader
     {
@@ -45,7 +44,6 @@ Shader "Unlit/Subtract"
             float3 _Size;
             float3 _StartPos;
             float3 _EndPos;
-            float3 _Rotation;
 
             v2f vert (appdata v)
             {
@@ -62,17 +60,14 @@ Shader "Unlit/Subtract"
                 return length(p)-0.8;
             }
 
-            float2x2 Rot(float a)
-            {
-                //rotation matrix
-                float s = sin(a);
-                float c = cos(a);
-                return transpose(float2x2(c, -s, s, c));
-            }
-
             float differenceSDF(float distA, float distB)
             {
                 return max(distA, -distB);
+            }
+
+            float unionSDF(float distA, float distB)
+            {
+                return min(distA, distB);
             }
 
             float pointDist()
@@ -98,7 +93,7 @@ Shader "Unlit/Subtract"
                 p = abs(p)-_Size;
                 return length(max(p, 0.))+min(max(p.x, max(p.y, p.z)), 0.);
             }
-            
+
 
             float sceneSDF(float3 samplePoint)
             {
@@ -117,20 +112,31 @@ Shader "Unlit/Subtract"
                 //bp -= _StartPos;
                 bp -= midpoint;
 
-                //set rotation (based on pi)
+                float angle = acos( dot( _StartPos, _EndPos ) ); 
 
-                bp.xz = mul(bp.xz,Rot((float)_Rotation.x)); //x
+                float3 axis = cross( _StartPos, _EndPos );
 
-                bp.xy = mul(bp.xy,Rot((float)_Rotation.y)); //y
+                float3 direction = normalize(_StartPos - midpoint);
 
-                bp.zy = mul(bp.zy,Rot((float)_Rotation.z)); //z
+                float3 xAxis = normalize(cross(float3(0, 1, 0), direction));
+                float3 yAxis = normalize(cross(direction, xAxis));
+                float3 zAxis = direction;
 
+                float4x4 rotationMatrix = {
+                    xAxis.x, yAxis.x, zAxis.x, 0,
+                    xAxis.y, yAxis.y, zAxis.y, 0,
+                    xAxis.z, yAxis.z, zAxis.z, 0,
+                    0,       0,       0,       1
+                };
+
+                if (midpoint != 0,0,0)
+                {
+                    bp.xyz = mul(bp.xyz, rotationMatrix);
+                }
 
                 float rotate = dBox(bp);
                 return differenceSDF(sphereDist, rotate);
             }
-
-
 
             float Raymarch(float3 ro, float3 rd)
             {

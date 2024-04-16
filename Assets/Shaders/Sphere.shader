@@ -129,11 +129,11 @@ Shader "Unlit/Sphere"
 
                 //set rotation (based on pi)
 
-                bp.xz = mul(bp.xz,Rot((float)_Rotation.x)); //x
+                bp.yz = mul(bp.yz,Rot((float)_Rotation.x)); //x
 
-                bp.xy = mul(bp.xy,Rot((float)_Rotation.y)); //y
+                bp.xz = mul(bp.xz,Rot((float)_Rotation.y)); //y
 
-                bp.zy = mul(bp.zy,Rot((float)_Rotation.z)); //z
+                bp.xy = mul(bp.xy,Rot((float)_Rotation.z)); //z
 
 
                 float rotate = dBox(bp);
