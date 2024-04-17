@@ -70,51 +70,15 @@ Shader "Unlit/Subtract"
                 return min(distA, distB);
             }
 
-            float pointDist()
-            {
-                //calculate the distance between points
-                float3 l = (_EndPos - _StartPos);
-
-
-                //pythagoras 
-                float endPyth = pow(_EndPos.x,2) + pow(_EndPos.y,2) + pow(_EndPos.z,2);
-                float startPyth = pow(_StartPos.x,2) + pow(_StartPos.y,2) + pow(_StartPos.z,2);
-
-                float pdot = dot(_EndPos, _StartPos);
-
-                //rotation
-                float theta = acos(pdot/(cross(sqrt(startPyth),sqrt(endPyth))));
-                
-                return theta;
-            }
-
             float dBox(float3 p)
             {
                 p = abs(p)-_Size;
                 return length(max(p, 0.))+min(max(p.x, max(p.y, p.z)), 0.);
             }
 
-
-            float sceneSDF(float3 samplePoint)
+            float4x4 lookat(float3 pointA,float3 pointB)
             {
-                float pd = pointDist();
-                float sphereDist = sphereSDF(samplePoint/1.2);
-
-                float3 midpoint =
-                (
-                    (_EndPos+_StartPos)/2
-                );
-
-                float3 bp = samplePoint;
-                //set location
-                //bp -= _StartPos;
-                bp -= midpoint;
-
-                float angle = acos( dot( _StartPos, _EndPos ) ); 
-
-                float3 axis = cross( _StartPos, _EndPos );
-
-                float3 direction = normalize(_StartPos - midpoint);
+                float3 direction = normalize(pointA - pointB);
 
                 float3 xAxis = normalize(cross(float3(0, 1, 0), direction));
                 float3 yAxis = normalize(cross(direction, xAxis));
@@ -127,7 +91,23 @@ Shader "Unlit/Subtract"
                     0,       0,       0,       1
                 };
 
-                bp.xyz = mul(bp.xyz, rotationMatrix);
+                return rotationMatrix;
+            }
+
+
+            float sceneSDF(float3 samplePoint)
+            {
+                float sphereDist = sphereSDF(samplePoint/1.2);
+
+                float3 midpoint =
+                (
+                    (_EndPos+_StartPos)/2
+                );
+
+                float3 bp = samplePoint;
+                bp -= midpoint;
+
+                bp.xyz = mul(bp.xyz, lookat(_StartPos, midpoint));
 
                 float rotate = dBox(bp);
                 return differenceSDF(sphereDist, rotate);
@@ -139,7 +119,6 @@ Shader "Unlit/Subtract"
                 float dS;
                 for(int i = 0; i < MAX_STEPS; i++)
                 {
-                    //float sphereDist = sphereSDF(samplePoint/1.2)*1.2;
                     float3 p = ro + dO * rd;
                     dS = sceneSDF(p);
                     dO += dS;
