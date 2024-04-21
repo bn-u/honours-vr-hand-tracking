@@ -21,6 +21,9 @@ public class MeshAdaptor : MonoBehaviour
         InitMesh();
     }
 
+    /// <summary>
+    /// Initial set up and cloning of mesh for the reset functionality
+    /// </summary>
     private void InitMesh()
     {
         //Clones mesh for reset function

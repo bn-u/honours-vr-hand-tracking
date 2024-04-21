@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using Unity.Mathematics;
 using UnityEngine;
@@ -13,12 +14,13 @@ public class TrackMovement : MonoBehaviour
     private Quaternion pointRotation;
     private int gestureType;
     private bool pickEnabled = false;
-    public Renderer renderer;
+    private Renderer renderer;
     Material meshMat;
 
     public bool right;
     public GameObject targetMesh;
     public bool isDebug = false;
+    public float pickSize = .02f;
 
     List<Vector3> pathPoints = new List<Vector3>();
     List<Vector3> points = new List<Vector3>();
@@ -36,6 +38,9 @@ public class TrackMovement : MonoBehaviour
         meshMat = renderer.material;
     }
 
+    /// <summary>
+    /// Finds the verticies with radius of hand, ready for the update script to move them
+    /// </summary>
     public void Pick()
     {
         //Create radius around point
@@ -55,7 +60,7 @@ public class TrackMovement : MonoBehaviour
             int childCount = targetMesh.transform.hierarchyCount;
             childCount--;
 
-            Collider[] radiusObjects = Physics.OverlapSphere(startPos, 0.1f);
+            Collider[] radiusObjects = Physics.OverlapSphere(startPos, pickSize);
             Debug.Log("Objects in radius: " + radiusObjects.Length);
 
             childList.Clear();
@@ -148,7 +153,9 @@ public class TrackMovement : MonoBehaviour
         return GameObject.Find("/XR Interaction Hands Setup/XR Origin (XR Rig)/Camera Offset/Right Hand/Poke Interactor").transform.position;
     }
     
-
+    /// <summary>
+    /// Creates a spline following the previously recorded points
+    /// </summary>
     void createSpline()
     {
         
@@ -195,6 +202,10 @@ public class TrackMovement : MonoBehaviour
         //FindRight(spline);
     }
 
+    /// <summary>
+    /// Builds a mesh along the spline's path
+    /// </summary>
+    /// <param name="extrude"></param>
     void extrudeMesh(SplineExtrude extrude)
     {
         if (extrude != null)
@@ -260,6 +271,12 @@ public class TrackMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Algorithm for getting a variable every N number of passes
+    /// </summary>
+    /// <param name="list"></param>
+    /// <param name="n"></param>
+    /// <returns></returns>
     static List<Vector3> EveryNthElement(List<Vector3> list, int n)
     {
         List<Vector3> result = new List<Vector3>();
