@@ -133,14 +133,14 @@ public class TrackMovement : MonoBehaviour
                 break;
             case 2:
                 trackPos();
-                pathPoints.Add(endPos);
                 createSpline();
                 break;
             case 3:
                 pickEnabled = false;
                 break;
         }
-
+        points.Clear();
+        pathPoints.Clear();
     }
 
     static Vector3 LeftPos()
@@ -260,6 +260,7 @@ public class TrackMovement : MonoBehaviour
     void trackPos()
     {
         var result = EveryNthElement(points, 12);
+        pathPoints.Add(startPos);
         for (int i = 0;i < result.Count;i++)
         {
             pathPoints.Add(result[i]);
